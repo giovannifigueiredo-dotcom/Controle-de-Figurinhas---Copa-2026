@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Figurinhas - Copa 2026</title>
+    <!-- Importando Tailwind CSS para manter o mesmo design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Desativa o highlight azul ao tocar em botões no telemóvel */
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 font-sans pb-20">
+
+    <!-- Header Fixo -->
+    <header class="bg-green-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2">
+                    <!-- Ícone Trophy -->
+                    <svg class="w-6 h-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                    <h1 class="text-xl font-extrabold tracking-tight">Copa 2026</h1>
+                </div>
+                
+                <div class="flex bg-green-800 rounded-lg p-1 space-x-1">
+                    <button id="btn-view-grid" onclick="setViewMode('grid')" title="Visualização em Grade">
+                        <!-- Ícone LayoutGrid -->
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                    </button>
+                    <button id="btn-view-list" onclick="setViewMode('list')" title="Visualização em Lista">
+                        <!-- Ícone List -->
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Barra de Progresso -->
+            <div class="bg-green-800/50 rounded-xl p-4 backdrop-blur-sm border border-green-600/50">
+                <div class="flex justify-between items-end mb-2">
+                    <div>
+                        <p class="text-green-200 text-sm font-medium mb-1">O Meu Álbum</p>
+                        <p class="text-2xl font-bold">
+                            <span id="progress-count">0</span> <span id="progress-total" class="text-base font-normal text-green-200">/ 0</span>
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <span id="progress-percentage" class="text-3xl font-black">0%</span>
+                    </div>
+                </div>
+                <div class="w-full bg-green-900 rounded-full h-3 mb-1 overflow-hidden">
+                    <div id="progress-bar" class="bg-yellow-400 h-3 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main id="main-content" class="max-w-5xl mx-auto px-4 py-6 space-y-8">
+        <!-- O conteúdo será gerado dinamicamente via JavaScript -->
+    </main>
+
+    <script>
+        // Dados da base do Álbum
+        const TEAM_PREFIXES = [
+            'MEX', 'RSA', 'KOR', 'CZE', 'CAN', 'BIH', 'QAT', 'SUI', 'BRA', 'MAR', 
+            'HAI', 'SCO', 'USA', 'PAR', 'AUS', 'TUR', 'GER', 'CUW', 'CIV', 'ECU', 
+            'NED', 'JPN', 'SWE', 'TUN', 'BEL', 'EGY', 'IRN', 'NZL', 'ESP', 'CPV', 
+            'KSA', 'URU', 'FRA', 'SEN', 'IRQ', 'NOR', 'ARG', 'ALG', 'AUT', 'JOR', 
+            'POR', 'COD', 'UZB', 'COL', 'ENG', 'CRO', 'GHA', 'PAN'
+        ];
+
+        const SECTIONS = [
+            {
+                id: 'specials',
+                title: 'Especiais (FWC / CC / Extras)',
+                stickers: [
+                    '80', 
+                    ...Array.from({ length: 19 }, (_, i) => `FWC${i + 1}`),
+                    ...Array.from({ length: 14 }, (_, i) => `CC${i + 1}`)
+                ]
+            },
+            {
+                id: 'teams',
+                title: 'Seleções (1 a 20)',
+                groups: TEAM_PREFIXES.map(prefix => ({
+                    prefix,
+                    title: `Seleção: ${prefix}`,
+                    stickers: Array.from({ length: 20 }, (_, i) => `${prefix}${i + 1}`)
+                }))
+            }
+        ];
+
+        // Variáveis de Estado
+        let collected = JSON.parse(localStorage.getItem('copa2026_stickers')) || {};
+        let viewMode = 'grid'; // 'grid' ou 'list'
+
+        // Ícones SVG reutilizáveis
+        const iconCheck = `<svg class="w-5 h-5 mr-2 text-green-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`;
+        const iconTrophySmall = `<svg class="w-4 h-4 mr-1.5 text-yellow-500 inline-block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`;
+
+        // Inicializa o layout HTML principal
+        function initApp() {
+            const main = document.getElementById('main-content');
+
+            // --- HTML: Secção de Especiais ---
+            let specialsHtml = `
+            <section class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center">
+                        ${iconCheck} ${SECTIONS[0].title}
+                    </h2>
+                    <div class="space-x-2">
+                        <button onclick="markGroup(0, null, true)" class="text-xs bg-gray-100 hover:bg-green-100 text-gray-700 font-semibold py-1.5 px-3 rounded-md transition-colors">
+                            Marcar Todas
+                        </button>
+                    </div>
+                </div>
+                <div id="specials-grid" class="grid gap-2 sm:gap-3">
+                    ${SECTIONS[0].stickers.map(id => `
+                        <button id="btn-${id}" onclick="toggleSticker('${id}')" style="min-height: 48px;">
+                            ${id}
+                        </button>
+                    `).join('')}
+                </div>
+            </section>`;
+
+            // --- HTML: Secção de Seleções ---
+            let teamsHtml = `
+            <div class="space-y-6">
+                <h2 class="text-xl font-black text-gray-800 border-b-2 border-green-500 pb-2 inline-block">
+                    ${SECTIONS[1].title}
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${SECTIONS[1].groups.map((group, idx) => `
+                        <section id="group-section-${idx}">
+                            <div class="flex justify-between items-center mb-3">
+                                <div>
+                                    <h3 id="group-title-${idx}" class="font-bold text-gray-800 text-lg flex items-center">${group.prefix}</h3>
+                                    <p id="group-subtitle-${idx}" class="text-xs text-gray-500 font-medium"></p>
+                                </div>
+                                <button id="group-action-${idx}"></button>
+                            </div>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                ${group.stickers.map(id => {
+                                    const numberOnly = id.replace(group.prefix, '');
+                                    return `
+                                    <button id="btn-${id}" onclick="toggleSticker('${id}')" title="${id}">
+                                        ${numberOnly}
+                                    </button>`;
+                                }).join('')}
+                            </div>
+                        </section>
+                    `).join('')}
+                </div>
+            </div>`;
+
+            main.innerHTML = specialsHtml + teamsHtml;
+            
+            updateViewMode();
+            updateUI();
+        }
+
+        // Funções de Ação
+        function toggleSticker(id) {
+            collected[id] = !collected[id];
+            saveAndRefresh();
+        }
+
+        function markGroup(sectionIdx, groupIdx, targetState) {
+            let stickersToUpdate = [];
+            
+            if (sectionIdx === 0) {
+                stickersToUpdate = SECTIONS[0].stickers;
+            } else {
+                stickersToUpdate = SECTIONS[1].groups[groupIdx].stickers;
+            }
+
+            stickersToUpdate.forEach(id => {
+                collected[id] = targetState;
+            });
+            
+            saveAndRefresh();
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('copa2026_stickers', JSON.stringify(collected));
+            updateUI();
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            updateViewMode();
+        }
+
+        function updateViewMode() {
+            const gridBtn = document.getElementById('btn-view-grid');
+            const listBtn = document.getElementById('btn-view-list');
+            const gridEl = document.getElementById('specials-grid');
+
+            if(viewMode === 'grid') {
+                gridBtn.className = 'p-1.5 rounded-md transition-colors bg-green-600 text-white';
+                listBtn.className = 'p-1.5 rounded-md transition-colors text-green-300 hover:text-white';
+                if(gridEl) gridEl.className = 'grid gap-2 sm:gap-3 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10';
+            } else {
+                listBtn.className = 'p-1.5 rounded-md transition-colors bg-green-600 text-white';
+                gridBtn.className = 'p-1.5 rounded-md transition-colors text-green-300 hover:text-white';
+                if(gridEl) gridEl.className = 'grid gap-2 sm:gap-3 grid-cols-3 sm:grid-cols-4';
+            }
+        }
+
+        // Atualiza as cores e o progresso na interface de forma dinâmica
+        function updateUI() {
+            // Cálculos de Progresso
+            let total = SECTIONS[0].stickers.length;
+            SECTIONS[1].groups.forEach(g => total += g.stickers.length);
+            
+            const collectedCount = Object.values(collected).filter(Boolean).length;
+            const percentage = total === 0 ? 0 : Math.round((collectedCount / total) * 100);
+
+            // Atualiza Header
+            document.getElementById('progress-count').innerText = collectedCount;
+            document.getElementById('progress-total').innerText = `/ ${total}`;
+            document.getElementById('progress-percentage').innerText = `${percentage}%`;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+
+            // Atualiza Botões da Secção de Especiais
+            SECTIONS[0].stickers.forEach(id => {
+                const btn = document.getElementById(`btn-${id}`);
+                if (!btn) return;
+                
+                if (collected[id]) {
+                    btn.className = `relative flex items-center justify-center p-2 rounded-lg font-bold text-sm transition-all duration-200 border-2 shadow-sm touch-manipulation bg-green-500 border-green-600 text-white shadow-green-500/30`;
+                } else {
+                    btn.className = `relative flex items-center justify-center p-2 rounded-lg font-bold text-sm transition-all duration-200 border-2 shadow-sm touch-manipulation bg-white border-gray-200 text-gray-600 hover:border-green-300 hover:bg-green-50`;
+                }
+            });
+
+            // Atualiza Botões da Secção de Seleções
+            SECTIONS[1].groups.forEach((group, idx) => {
+                let groupCollected = 0;
+                
+                group.stickers.forEach(id => {
+                    if (collected[id]) groupCollected++;
+                    
+                    const btn = document.getElementById(`btn-${id}`);
+                    if (!btn) return;
+                    
+                    if (collected[id]) {
+                        btn.className = `aspect-square flex items-center justify-center rounded font-bold text-xs sm:text-sm transition-all border touch-manipulation bg-green-500 border-green-600 text-white`;
+                    } else {
+                        btn.className = `aspect-square flex items-center justify-center rounded font-bold text-xs sm:text-sm transition-all border touch-manipulation bg-gray-50 border-gray-200 text-gray-500 hover:border-green-300`;
+                    }
+                });
+
+                const isComplete = groupCollected === group.stickers.length;
+                
+                // Atualiza Metadados do Grupo
+                const sectionEl = document.getElementById(`group-section-${idx}`);
+                const titleEl = document.getElementById(`group-title-${idx}`);
+                const subtitleEl = document.getElementById(`group-subtitle-${idx}`);
+                const actionBtn = document.getElementById(`group-action-${idx}`);
+
+                if(sectionEl) {
+                    sectionEl.className = `bg-white rounded-2xl p-4 shadow-sm border transition-colors ${isComplete ? 'border-green-400 bg-green-50/30' : 'border-gray-200'}`;
+                }
+                
+                if(subtitleEl) {
+                    subtitleEl.innerText = `${groupCollected} de ${group.stickers.length} figurinhas`;
+                }
+
+                if(actionBtn) {
+                    if (isComplete) {
+                        actionBtn.innerText = 'Desmarcar';
+                        actionBtn.className = 'text-xs font-semibold py-1 px-2.5 rounded-md transition-colors text-red-600 bg-red-50 hover:bg-red-100';
+                        actionBtn.onclick = () => markGroup(1, idx, false);
+                    } else {
+                        actionBtn.innerText = 'Completar';
+                        actionBtn.className = 'text-xs font-semibold py-1 px-2.5 rounded-md transition-colors text-green-700 bg-green-50 hover:bg-green-100';
+                        actionBtn.onclick = () => markGroup(1, idx, true);
+                    }
+                }
+
+                if(titleEl) {
+                    titleEl.innerHTML = (isComplete ? iconTrophySmall : '') + group.prefix;
+                }
+            });
+        }
+
+        // Inicializa a aplicação ao carregar a página
+        document.addEventListener('DOMContentLoaded', initApp);
+
+    </script>
+</body>
+</html>
