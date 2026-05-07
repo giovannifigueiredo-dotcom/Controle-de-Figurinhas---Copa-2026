@@ -100,6 +100,7 @@
         // Ícones SVG reutilizáveis
         const iconCheck = `<svg class="w-5 h-5 mr-2 text-green-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`;
         const iconTrophySmall = `<svg class="w-4 h-4 mr-1.5 text-yellow-500 inline-block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`;
+        const iconSearch = `<svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>`;
 
         // Inicializa o layout HTML principal
         function initApp() {
@@ -127,15 +128,34 @@
                 </div>
             </section>`;
 
-            // --- HTML: Secção de Seleções ---
+            // --- HTML: Secção de Seleções (COM BARRA DE PESQUISA) ---
             let teamsHtml = `
-            <div class="space-y-6">
-                <h2 class="text-xl font-black text-gray-800 border-b-2 border-green-500 pb-2 inline-block">
-                    ${SECTIONS[1].title}
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="space-y-6 pt-4">
+                
+                <!-- Cabeçalho e Barra de Pesquisa -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-green-500 pb-3">
+                    <h2 class="text-xl font-black text-gray-800 shrink-0">
+                        ${SECTIONS[1].title}
+                    </h2>
+                    
+                    <div class="relative w-full sm:w-80">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            ${iconSearch}
+                        </div>
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            oninput="handleSearch(this.value)" 
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 sm:text-sm transition-shadow shadow-sm" 
+                            placeholder="Pesquisar seleção (ex: BRA, POR, ARG)..."
+                        >
+                    </div>
+                </div>
+
+                <!-- Lista de Seleções -->
+                <div id="teams-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     ${SECTIONS[1].groups.map((group, idx) => `
-                        <section id="group-section-${idx}">
+                        <section id="group-section-${idx}" data-prefix="${group.prefix.toLowerCase()}">
                             <div class="flex justify-between items-center mb-3">
                                 <div>
                                     <h3 id="group-title-${idx}" class="font-bold text-gray-800 text-lg flex items-center">${group.prefix}</h3>
@@ -155,12 +175,40 @@
                         </section>
                     `).join('')}
                 </div>
+                
+                <!-- Mensagem de Nenhum Resultado -->
+                <div id="no-results-msg" class="hidden text-center py-8 text-gray-500">
+                    <p>Nenhuma seleção encontrada com essa sigla.</p>
+                </div>
             </div>`;
 
             main.innerHTML = specialsHtml + teamsHtml;
             
             updateViewMode();
             updateUI();
+        }
+
+        // Função de Pesquisa
+        function handleSearch(term) {
+            const query = term.toLowerCase().trim();
+            let hasVisibleTeams = false;
+
+            SECTIONS[1].groups.forEach((group, idx) => {
+                const sectionEl = document.getElementById(`group-section-${idx}`);
+                if (sectionEl) {
+                    if (group.prefix.toLowerCase().includes(query)) {
+                        sectionEl.style.display = 'block';
+                        hasVisibleTeams = true;
+                    } else {
+                        sectionEl.style.display = 'none';
+                    }
+                }
+            });
+
+            const noResultsMsg = document.getElementById('no-results-msg');
+            if (noResultsMsg) {
+                noResultsMsg.style.display = hasVisibleTeams ? 'none' : 'block';
+            }
         }
 
         // Funções de Ação
@@ -264,6 +312,7 @@
                 const actionBtn = document.getElementById(`group-action-${idx}`);
 
                 if(sectionEl) {
+                    // Mantém a lógica de visibilidade de pesquisa intacta reatribuindo apenas as classes de aparência
                     sectionEl.className = `bg-white rounded-2xl p-4 shadow-sm border transition-colors ${isComplete ? 'border-green-400 bg-green-50/30' : 'border-gray-200'}`;
                 }
                 
