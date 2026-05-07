@@ -1,0 +1,1 @@
+# Controle-de-Figurinhas---Copa-2026
