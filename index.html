@@ -11,12 +11,168 @@
         button {
             -webkit-tap-highlight-color: transparent;
         }
+
+        /* ===== SISTEMA DE LOGIN ===== */
+        #login-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(135deg, #14532d 0%, #166534 40%, #15803d 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        #login-overlay.hidden { display: none; }
+
+        .login-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 100%; max-width: 420px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            animation: loginSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes loginSlideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .login-tab-btn {
+            flex: 1; padding: 0.5rem 1rem;
+            font-weight: 600; font-size: 0.875rem;
+            border-radius: 0.5rem; transition: all 0.2s;
+            color: #6b7280;
+        }
+        .login-tab-btn.active {
+            background: #16a34a; color: white;
+        }
+
+        .login-input {
+            width: 100%; border: 2px solid #e5e7eb;
+            border-radius: 0.75rem; padding: 0.625rem 0.875rem;
+            font-size: 0.9375rem; outline: none;
+            transition: border-color 0.2s;
+        }
+        .login-input:focus { border-color: #16a34a; }
+
+        .login-btn-primary {
+            width: 100%; background: #16a34a; color: white;
+            font-weight: 700; font-size: 1rem;
+            padding: 0.75rem; border-radius: 0.75rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .login-btn-primary:hover { background: #15803d; }
+        .login-btn-primary:active { transform: scale(0.98); }
+
+        .login-error {
+            background: #fef2f2; border: 1px solid #fecaca;
+            color: #dc2626; border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem; font-size: 0.875rem;
+            display: none;
+        }
+        .login-error.visible { display: block; }
+
+        /* Badge de utilizador no header */
+        #user-badge {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,255,255,0.15);
+            border-radius: 9999px; padding: 0.25rem 0.75rem;
+            font-size: 0.8125rem; font-weight: 600; cursor: pointer;
+            transition: background 0.2s;
+        }
+        #user-badge:hover { background: rgba(255,255,255,0.25); }
+        #user-badge .avatar {
+            width: 1.5rem; height: 1.5rem;
+            background: #fbbf24; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700; color: #92400e;
+        }
+
+        /* Modal de logout / perfis */
+        #user-menu {
+            position: absolute; top: calc(100% + 8px); right: 1rem;
+            background: white; border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 0.75rem; min-width: 200px; z-index: 100;
+            display: none;
+        }
+        #user-menu.open { display: block; animation: menuPop 0.2s ease; }
+        @keyframes menuPop {
+            from { opacity:0; transform: translateY(-8px) scale(0.95); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
+        }
+        .menu-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 0.75rem; border-radius: 0.5rem;
+            font-size: 0.875rem; cursor: pointer;
+            transition: background 0.15s; width: 100%;
+            text-align: left;
+        }
+        .menu-item:hover { background: #f3f4f6; }
+        .menu-item.danger { color: #dc2626; }
+        .menu-item.danger:hover { background: #fef2f2; }
     </style>
 </head>
+
+<!-- ===== MODAL DE LOGIN ===== -->
+<div id="login-overlay">
+    <div class="login-card">
+        <!-- Logo -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-green-100 rounded-2xl mb-3">
+                <svg class="w-8 h-8 text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            </div>
+            <h1 class="text-2xl font-extrabold text-gray-900">Copa 2026</h1>
+            <p class="text-gray-500 text-sm mt-1">Controle de Figurinhas</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex bg-gray-100 rounded-xl p-1 mb-5 gap-1">
+            <button class="login-tab-btn active" id="tab-login" onclick="switchTab('login')">Entrar</button>
+            <button class="login-tab-btn" id="tab-register" onclick="switchTab('register')">Criar Conta</button>
+        </div>
+
+        <!-- Formulário Login -->
+        <div id="form-login" class="space-y-3">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Utilizador</label>
+                <input id="login-username" type="text" class="login-input" placeholder="O seu nome de utilizador" autocomplete="username">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Senha</label>
+                <input id="login-password" type="password" class="login-input" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <div id="login-error" class="login-error">Utilizador ou senha incorretos.</div>
+            <button class="login-btn-primary mt-2" onclick="doLogin()">
+                Entrar
+            </button>
+        </div>
+
+        <!-- Formulário Registo -->
+        <div id="form-register" class="space-y-3 hidden">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Nome de Utilizador</label>
+                <input id="reg-username" type="text" class="login-input" placeholder="Escolha um nome" autocomplete="username">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Senha</label>
+                <input id="reg-password" type="password" class="login-input" placeholder="Mínimo 4 caracteres" autocomplete="new-password">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Confirmar Senha</label>
+                <input id="reg-confirm" type="password" class="login-input" placeholder="Repita a senha" autocomplete="new-password">
+            </div>
+            <div id="reg-error" class="login-error"></div>
+            <button class="login-btn-primary mt-2" onclick="doRegister()">
+                Criar Conta
+            </button>
+        </div>
+
+        <p class="text-center text-xs text-gray-400 mt-4">Os dados são guardados localmente neste dispositivo.</p>
+    </div>
+</div>
+
 <body class="min-h-screen bg-gray-100 font-sans pb-20">
 
     <!-- Header Fixo -->
-    <header class="bg-green-700 text-white shadow-lg sticky top-0 z-50">
+    <header class="bg-green-700 text-white shadow-lg sticky top-0 z-50 relative">
         <div class="max-w-5xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center space-x-2">
@@ -25,6 +181,30 @@
                     <h1 class="text-xl font-extrabold tracking-tight">Copa 2026</h1>
                 </div>
                 
+                <!-- Badge do utilizador logado -->
+                <div id="user-badge" onclick="toggleUserMenu()">
+                    <div class="avatar" id="user-avatar-initial">?</div>
+                    <span id="user-display-name">Utilizador</span>
+                    <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+
+                <!-- Menu dropdown -->
+                <div id="user-menu">
+                    <div class="px-3 py-1 mb-1">
+                        <p class="text-xs text-gray-400 font-medium">SESSÃO ATIVA</p>
+                        <p id="menu-username" class="font-bold text-gray-800 text-sm"></p>
+                    </div>
+                    <hr class="border-gray-100 mb-1">
+                    <button class="menu-item" onclick="switchAccount()">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Trocar Conta
+                    </button>
+                    <button class="menu-item danger" onclick="confirmDeleteAccount()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Apagar Conta
+                    </button>
+                </div>
+
                 <div class="flex bg-green-800 rounded-lg p-1 space-x-1">
                     <button id="btn-view-grid" onclick="setViewMode('grid')" title="Visualização em Grade">
                         <!-- Ícone LayoutGrid -->
@@ -93,8 +273,113 @@
             }
         ];
 
+        // ===== SISTEMA DE AUTENTICAÇÃO =====
+        function getAuthStore() {
+            return JSON.parse(localStorage.getItem('copa2026_auth') || '{"users":{},"currentUser":null}');
+        }
+        function saveAuthStore(store) {
+            localStorage.setItem('copa2026_auth', JSON.stringify(store));
+        }
+
+        function switchTab(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-register').classList.toggle('hidden', isLogin);
+            document.getElementById('tab-login').classList.toggle('active', isLogin);
+            document.getElementById('tab-register').classList.toggle('active', !isLogin);
+            document.getElementById('login-error').classList.remove('visible');
+            document.getElementById('reg-error').classList.remove('visible');
+        }
+
+        function doLogin() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            const errEl = document.getElementById('login-error');
+            const store = getAuthStore();
+            if (!username || !password) { errEl.textContent = 'Preencha todos os campos.'; errEl.classList.add('visible'); return; }
+            const user = store.users[username.toLowerCase()];
+            if (!user || user.password !== btoa(password)) {
+                errEl.textContent = 'Utilizador ou senha incorretos.';
+                errEl.classList.add('visible'); return;
+            }
+            store.currentUser = username.toLowerCase();
+            saveAuthStore(store);
+            startSession(username.toLowerCase());
+        }
+
+        function doRegister() {
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirm  = document.getElementById('reg-confirm').value;
+            const errEl    = document.getElementById('reg-error');
+            const store    = getAuthStore();
+            if (!username || !password) { errEl.textContent = 'Preencha todos os campos.'; errEl.classList.add('visible'); return; }
+            if (username.length < 3)    { errEl.textContent = 'O nome deve ter pelo menos 3 caracteres.'; errEl.classList.add('visible'); return; }
+            if (password.length < 4)    { errEl.textContent = 'A senha deve ter pelo menos 4 caracteres.'; errEl.classList.add('visible'); return; }
+            if (password !== confirm)   { errEl.textContent = 'As senhas não coincidem.'; errEl.classList.add('visible'); return; }
+            if (store.users[username.toLowerCase()]) { errEl.textContent = 'Este nome já está em uso.'; errEl.classList.add('visible'); return; }
+            store.users[username.toLowerCase()] = { password: btoa(password), stickers: {} };
+            store.currentUser = username.toLowerCase();
+            saveAuthStore(store);
+            startSession(username.toLowerCase());
+        }
+
+        function startSession(username) {
+            const store = getAuthStore();
+            collected = store.users[username]?.stickers || {};
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('user-display-name').textContent = username;
+            document.getElementById('user-avatar-initial').textContent = username[0].toUpperCase();
+            document.getElementById('menu-username').textContent = username;
+            document.getElementById('main-content').innerHTML = '';
+            initApp();
+        }
+
+        function toggleUserMenu() {
+            document.getElementById('user-menu').classList.toggle('open');
+        }
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('user-badge')?.contains(e.target) &&
+                !document.getElementById('user-menu')?.contains(e.target)) {
+                document.getElementById('user-menu')?.classList.remove('open');
+            }
+        });
+
+        function switchAccount() {
+            const store = getAuthStore();
+            store.currentUser = null;
+            saveAuthStore(store);
+            location.reload();
+        }
+
+        function confirmDeleteAccount() {
+            const store = getAuthStore();
+            const username = store.currentUser;
+            if (confirm(`Apagar a conta "${username}" e todo o progresso? Esta ação não pode ser desfeita.`)) {
+                delete store.users[username];
+                store.currentUser = null;
+                saveAuthStore(store);
+                location.reload();
+            }
+        }
+
+        function checkAutoLogin() {
+            const store = getAuthStore();
+            if (store.currentUser && store.users[store.currentUser]) {
+                startSession(store.currentUser);
+            } else {
+                document.getElementById('login-overlay').classList.remove('hidden');
+                ['login-username','login-password'].forEach(id => {
+                    document.getElementById(id)?.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+                });
+                ['reg-username','reg-password','reg-confirm'].forEach(id => {
+                    document.getElementById(id)?.addEventListener('keydown', e => { if(e.key==='Enter') doRegister(); });
+                });
+            }
+        }
+
         // Variáveis de Estado
-        let collected = JSON.parse(localStorage.getItem('copa2026_stickers')) || {};
+        let collected = {};
         let viewMode = 'grid'; // 'grid' ou 'list'
 
         // Ícones SVG reutilizáveis
@@ -234,7 +519,11 @@
         }
 
         function saveAndRefresh() {
-            localStorage.setItem('copa2026_stickers', JSON.stringify(collected));
+            const store = getAuthStore();
+            if (store.currentUser) {
+                store.users[store.currentUser].stickers = collected;
+                saveAuthStore(store);
+            }
             updateUI();
         }
 
@@ -339,7 +628,7 @@
         }
 
         // Inicializa a aplicação ao carregar a página
-        document.addEventListener('DOMContentLoaded', initApp);
+        document.addEventListener('DOMContentLoaded', checkAutoLogin);
 
     </script>
 </body>
