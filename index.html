@@ -21,6 +21,8 @@
             --green: #22C55E;
             --green-dark: #16A34A;
             --red: #EF4444;
+            --orange: #F97316;
+            --orange-dark: #EA6A00;
             --border: #2A2A3A;
             --shadow: 0 4px 24px rgba(0,0,0,0.4);
         }
@@ -101,13 +103,8 @@
             margin-bottom: 20px;
         }
 
-        .login-box input:focus {
-            border-color: var(--gold);
-        }
-
-        .login-box input::placeholder {
-            color: #555;
-        }
+        .login-box input:focus { border-color: var(--gold); }
+        .login-box input::placeholder { color: #555; }
 
         .btn-primary {
             width: 100%;
@@ -173,9 +170,7 @@
             letter-spacing: -0.5px;
         }
 
-        .header-left h1 span {
-            color: var(--gold);
-        }
+        .header-left h1 span { color: var(--gold); }
 
         .user-badge {
             background: rgba(255,255,255,0.1);
@@ -201,9 +196,7 @@
             transition: all 0.2s;
         }
 
-        .btn-logout:hover {
-            background: rgba(255,255,255,0.2);
-        }
+        .btn-logout:hover { background: rgba(255,255,255,0.2); }
 
         /* Stats Bar */
         .stats-bar {
@@ -294,6 +287,64 @@
         .stat-card.got .num { color: var(--green); }
         .stat-card.missing .num { color: var(--red); }
         .stat-card.pct .num { color: var(--gold); }
+        .stat-card.dupes .num { color: var(--orange); }
+
+        /* ===== TABS ===== */
+        .tabs-bar {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+        }
+
+        .tabs-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0;
+        }
+
+        .tab-btn {
+            padding: 14px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover { color: var(--text); }
+
+        .tab-btn.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab-badge {
+            background: var(--orange);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .tab-badge.zero {
+            background: var(--border);
+            color: var(--text-muted);
+        }
+
+        /* Tab Content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* Controls */
         .controls {
@@ -378,6 +429,7 @@
             border: 1px solid var(--border);
             overflow: hidden;
             transition: all 0.2s;
+            animation: fadeIn 0.3s ease;
         }
 
         .team-section.hidden { display: none; }
@@ -391,9 +443,7 @@
             transition: background 0.2s;
         }
 
-        .team-header:hover {
-            background: var(--bg-card-hover);
-        }
+        .team-header:hover { background: var(--bg-card-hover); }
 
         .team-header-left {
             display: flex;
@@ -401,16 +451,9 @@
             gap: 12px;
         }
 
-        .team-flag {
-            font-size: 28px;
-            width: 40px;
-            text-align: center;
-        }
+        .team-flag { font-size: 28px; width: 40px; text-align: center; }
 
-        .team-name {
-            font-weight: 700;
-            font-size: 16px;
-        }
+        .team-name { font-weight: 700; font-size: 16px; }
 
         .team-code {
             color: var(--text-muted);
@@ -456,18 +499,14 @@
             margin-left: 8px;
         }
 
-        .team-section.open .team-chevron {
-            transform: rotate(180deg);
-        }
+        .team-section.open .team-chevron { transform: rotate(180deg); }
 
         .team-stickers {
             display: none;
             padding: 0 20px 20px;
         }
 
-        .team-section.open .team-stickers {
-            display: block;
-        }
+        .team-section.open .team-stickers { display: block; }
 
         .stickers-grid {
             display: flex;
@@ -475,6 +514,7 @@
             gap: 8px;
         }
 
+        /* ===== STICKER CARDS ===== */
         .sticker {
             width: 64px;
             height: 64px;
@@ -502,14 +542,13 @@
             transform: scale(1.05);
         }
 
+        /* GOT state */
         .sticker.got {
             background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(22,163,74,0.15));
             border-color: var(--green);
         }
 
-        .sticker.got .sticker-num {
-            color: var(--green);
-        }
+        .sticker.got .sticker-num { color: var(--green); }
 
         .sticker.got::after {
             content: '✓';
@@ -521,6 +560,36 @@
             font-weight: 900;
         }
 
+        /* DUPLICATE state — overrides got */
+        .sticker.has-dupes {
+            background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,106,0,0.15));
+            border-color: var(--orange);
+        }
+
+        .sticker.has-dupes .sticker-num { color: var(--orange); }
+
+        .sticker.has-dupes::after {
+            content: '';
+        }
+
+        .sticker.has-dupes .dupe-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--orange);
+            color: white;
+            font-size: 9px;
+            font-weight: 900;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg);
+            z-index: 2;
+        }
+
         .sticker.filtered-out { display: none; }
 
         /* Select all / Deselect all */
@@ -528,6 +597,7 @@
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
         }
 
         .team-action-btn {
@@ -546,6 +616,199 @@
         .team-action-btn:hover {
             border-color: var(--gold);
             color: var(--gold);
+        }
+
+        /* ===== DUPLICATES TAB ===== */
+        .dupes-tab-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 24px 40px;
+        }
+
+        .dupes-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .dupes-header-bar h2 {
+            font-size: 20px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dupes-header-bar h2 .count-pill {
+            background: var(--orange);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+        }
+
+        .dupes-empty {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+        }
+
+        .dupes-empty .icon { font-size: 64px; margin-bottom: 16px; }
+        .dupes-empty h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .dupes-empty p { font-size: 14px; line-height: 1.6; }
+
+        .dupes-team-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .dupes-team-header {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(249,115,22,0.05);
+        }
+
+        .dupes-team-header .flag { font-size: 24px; }
+
+        .dupes-team-header .name {
+            font-weight: 700;
+            font-size: 15px;
+            flex: 1;
+        }
+
+        .dupes-team-header .dupe-count {
+            background: rgba(249,115,22,0.15);
+            border: 1px solid var(--orange);
+            color: var(--orange);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .dupes-stickers-list {
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .dupe-item {
+            background: var(--bg);
+            border: 2px solid var(--orange);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 160px;
+        }
+
+        .dupe-item .dupe-code {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--orange);
+            flex: 1;
+        }
+
+        .dupe-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+            line-height: 1;
+        }
+
+        .qty-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+        .qty-btn.minus:hover { border-color: var(--red); color: var(--red); }
+
+        .qty-display {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--orange);
+            min-width: 28px;
+            text-align: center;
+        }
+
+        /* Dupes summary banner */
+        .dupes-summary-banner {
+            background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(234,106,0,0.05));
+            border: 1px solid rgba(249,115,22,0.3);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .dupes-summary-banner .icon { font-size: 32px; }
+
+        .dupes-summary-banner .info { flex: 1; }
+
+        .dupes-summary-banner .info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--orange);
+            margin-bottom: 2px;
+        }
+
+        .dupes-summary-banner .info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .dupes-sort-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dupes-sort-btn {
+            padding: 7px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .dupes-sort-btn.active {
+            border-color: var(--orange);
+            color: var(--orange);
+            background: rgba(249,115,22,0.1);
         }
 
         /* Footer */
@@ -568,6 +831,8 @@
             .sticker { width: 56px; height: 56px; }
             .team-progress-bar { width: 60px; }
             .progress-numbers .big { font-size: 28px; }
+            .dupe-item { min-width: 140px; }
+            .tab-btn { padding: 12px 14px; font-size: 13px; }
         }
 
         /* Animations */
@@ -576,7 +841,13 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .team-section { animation: fadeIn 0.3s ease; }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .dupe-badge { animation: popIn 0.3s ease; }
 
         /* Toast */
         .toast {
@@ -667,22 +938,74 @@
                     <div class="num" id="statPct">0%</div>
                     <div class="lbl">Completo</div>
                 </div>
+                <div class="stat-card dupes">
+                    <div class="num" id="statDupes">0</div>
+                    <div class="lbl">Repetidas</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="controls">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Buscar figurinha... (ex: BRA5, ARG, FWC)" autocomplete="off">
-        </div>
-        <div class="filter-btns">
-            <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Todas</button>
-            <button class="filter-btn" data-filter="got" onclick="setFilter('got', this)">✅ Tenho</button>
-            <button class="filter-btn" data-filter="missing" onclick="setFilter('missing', this)">❌ Faltam</button>
+    <!-- ===== TABS ===== -->
+    <div class="tabs-bar">
+        <div class="tabs-inner">
+            <button class="tab-btn active" onclick="switchTab('album', this)">
+                📋 Meu Álbum
+            </button>
+            <button class="tab-btn" onclick="switchTab('dupes', this)" id="dupesTabBtn">
+                🔄 Repetidas
+                <span class="tab-badge zero" id="dupesTabBadge">0</span>
+            </button>
         </div>
     </div>
 
-    <div class="teams-container" id="teamsContainer"></div>
+    <!-- ===== ÁLBUM TAB ===== -->
+    <div class="tab-content active" id="tab-album">
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar figurinha... (ex: BRA5, ARG, FWC)" autocomplete="off">
+            </div>
+            <div class="filter-btns">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Todas</button>
+                <button class="filter-btn" data-filter="got" onclick="setFilter('got', this)">✅ Tenho</button>
+                <button class="filter-btn" data-filter="missing" onclick="setFilter('missing', this)">❌ Faltam</button>
+                <button class="filter-btn" data-filter="dupes" onclick="setFilter('dupes', this)">🔄 Repetidas</button>
+            </div>
+        </div>
+        <div class="teams-container" id="teamsContainer"></div>
+    </div>
+
+    <!-- ===== REPETIDAS TAB ===== -->
+    <div class="tab-content" id="tab-dupes">
+        <div class="dupes-tab-content">
+            <div class="dupes-header-bar">
+                <h2>
+                    🔄 Figurinhas Repetidas
+                    <span class="count-pill" id="dupesTotalPill">0 tipos</span>
+                </h2>
+                <div class="dupes-sort-btns">
+                    <button class="dupes-sort-btn active" onclick="setDupesSort('team', this)">Por time</button>
+                    <button class="dupes-sort-btn" onclick="setDupesSort('qty', this)">Por quantidade</button>
+                </div>
+            </div>
+
+            <div id="dupesSummaryBanner" class="dupes-summary-banner" style="display:none">
+                <span class="icon">🔄</span>
+                <div class="info">
+                    <h3 id="dupesBannerTitle">0 tipos de repetidas</h3>
+                    <p id="dupesBannerSub">Total de 0 figurinhas repetidas para trocar</p>
+                </div>
+            </div>
+
+            <div id="dupesEmpty" class="dupes-empty">
+                <div class="icon">🎴</div>
+                <h3>Nenhuma repetida ainda!</h3>
+                <p>Quando você tiver figurinhas repetidas,<br>elas aparecerão aqui organizadas por time.</p>
+            </div>
+
+            <div id="dupesContainer"></div>
+        </div>
+    </div>
 
     <footer>
         ⚽ Gerenciador de Figurinhas Copa do Mundo 2026 — Álbum Panini<br>
@@ -694,7 +1017,7 @@
 
 <script>
 // ============================================================
-//  DATA — All teams and stickers from the PDF table
+//  DATA
 // ============================================================
 const TEAMS_DATA = [
     { code: "FWC", name: "FIFA World Cup", flag: "🏆", stickers: ["00","FWC1","FWC2","FWC3","FWC4","FWC5","FWC6","FWC7","FWC8","FWC9","FWC10","FWC11","FWC12","FWC13","FWC14","FWC15","FWC16","FWC17","FWC18","FWC19"] },
@@ -753,21 +1076,22 @@ const TEAMS_DATA = [
 //  STATE
 // ============================================================
 let currentUser = null;
-let ownedStickers = new Set();
+let ownedStickers = new Set();      // stickers the user has (at least 1)
+let duplicates = {};                 // { stickerCode: extraCount } — count BEYOND the first copy
 let currentFilter = 'all';
+let dupesSort = 'team';
 
 // ============================================================
-//  STORAGE — using localStorage with user-scoped keys
+//  STORAGE
 // ============================================================
-function getStorageKey(user) {
-    return `album_copa2026_${user.toLowerCase().trim()}`;
-}
+function getStorageKey(user) { return `album_copa2026_${user.toLowerCase().trim()}`; }
 
 function saveProgress() {
     if (!currentUser) return;
     const data = {
         user: currentUser,
         owned: Array.from(ownedStickers),
+        duplicates: duplicates,
         updatedAt: new Date().toISOString()
     };
     localStorage.setItem(getStorageKey(currentUser), JSON.stringify(data));
@@ -778,12 +1102,12 @@ function loadProgress(user) {
     if (raw) {
         try {
             const data = JSON.parse(raw);
-            return new Set(data.owned || []);
-        } catch(e) {
-            return new Set();
-        }
+            const owned = new Set(data.owned || []);
+            const dupes = data.duplicates || {};
+            return { owned, dupes };
+        } catch(e) { /* fall through */ }
     }
-    return new Set();
+    return { owned: new Set(), dupes: {} };
 }
 
 // ============================================================
@@ -796,7 +1120,9 @@ function doLogin() {
         return;
     }
     currentUser = code;
-    ownedStickers = loadProgress(code);
+    const saved = loadProgress(code);
+    ownedStickers = saved.owned;
+    duplicates = saved.dupes;
     localStorage.setItem('album_copa2026_lastUser', code);
 
     document.getElementById('loginScreen').classList.add('hidden');
@@ -805,27 +1131,37 @@ function doLogin() {
 
     renderTeams();
     updateStats();
+    renderDupesTab();
 }
 
 function doLogout() {
     saveProgress();
     currentUser = null;
     ownedStickers = new Set();
+    duplicates = {};
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('mainApp').classList.remove('active');
     document.getElementById('userCodeInput').value = '';
 }
 
-// Auto-login if returning user
 function checkAutoLogin() {
     const lastUser = localStorage.getItem('album_copa2026_lastUser');
-    if (lastUser) {
-        document.getElementById('userCodeInput').value = lastUser;
-    }
+    if (lastUser) document.getElementById('userCodeInput').value = lastUser;
 }
 
 // ============================================================
-//  RENDER
+//  TABS
+// ============================================================
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    if (tab === 'dupes') renderDupesTab();
+}
+
+// ============================================================
+//  RENDER ÁLBUM
 // ============================================================
 function renderTeams() {
     const container = document.getElementById('teamsContainer');
@@ -863,15 +1199,8 @@ function renderTeams() {
                     <button class="team-action-btn" onclick="selectAll('${team.code}')">✅ Marcar Todas</button>
                     <button class="team-action-btn" onclick="deselectAll('${team.code}')">❌ Desmarcar Todas</button>
                 </div>
-                <div class="stickers-grid">
-                    ${team.stickers.map(s => `
-                        <div class="sticker ${ownedStickers.has(s) ? 'got' : ''}" 
-                             id="s-${s}" 
-                             onclick="toggleSticker('${s}','${team.code}')"
-                             data-code="${s}">
-                            <span class="sticker-num">${s}</span>
-                        </div>
-                    `).join('')}
+                <div class="stickers-grid" id="grid-${team.code}">
+                    ${team.stickers.map(s => renderStickerHTML(s)).join('')}
                 </div>
             </div>
         `;
@@ -880,31 +1209,108 @@ function renderTeams() {
     });
 }
 
-function toggleTeam(code) {
-    const section = document.getElementById(`team-${code}`);
-    section.classList.toggle('open');
+function renderStickerHTML(s) {
+    const isOwned = ownedStickers.has(s);
+    const dupeCount = duplicates[s] || 0;
+    const hasDupes = isOwned && dupeCount > 0;
+
+    let cls = 'sticker';
+    if (hasDupes) cls += ' got has-dupes';
+    else if (isOwned) cls += ' got';
+
+    const dupeBadge = hasDupes
+        ? `<span class="dupe-badge">+${dupeCount}</span>`
+        : '';
+
+    return `
+        <div class="${cls}" 
+             id="s-${s}" 
+             onclick="toggleSticker('${s}', event)"
+             oncontextmenu="addDupe('${s}', event)"
+             data-code="${s}"
+             title="${hasDupes ? `${dupeCount} repetida(s) — clique direito para adicionar mais` : 'Clique para marcar · Clique direito para adicionar repetida'}">
+            ${dupeBadge}
+            <span class="sticker-num">${s}</span>
+        </div>
+    `;
 }
 
-function toggleSticker(stickerCode, teamCode) {
+function toggleTeam(code) {
+    document.getElementById(`team-${code}`).classList.toggle('open');
+}
+
+// Left-click: toggle owned (mark/unmark). If unmarking and has dupes, warn.
+function toggleSticker(stickerCode, event) {
+    event.preventDefault();
     const el = document.getElementById(`s-${stickerCode}`);
+
     if (ownedStickers.has(stickerCode)) {
-        ownedStickers.delete(stickerCode);
-        el.classList.remove('got');
+        // Already owned — check if has dupes
+        const dupeCount = duplicates[stickerCode] || 0;
+        if (dupeCount > 0) {
+            // Reduce dupes by 1 first (long-hold unmark vs quick unmark)
+            // On simple click, remove one extra copy
+            duplicates[stickerCode]--;
+            if (duplicates[stickerCode] <= 0) delete duplicates[stickerCode];
+            showToast(`➖ Removida 1 repetida de ${stickerCode}`);
+        } else {
+            // No dupes, unmark completely
+            ownedStickers.delete(stickerCode);
+        }
     } else {
         ownedStickers.add(stickerCode);
-        el.classList.add('got');
     }
-    updateTeamProgress(teamCode);
+
+    refreshStickerEl(stickerCode);
+    const team = TEAMS_DATA.find(t => t.stickers.includes(stickerCode));
+    if (team) updateTeamProgress(team.code);
     updateStats();
     saveProgress();
+}
+
+// Right-click: add a duplicate
+function addDupe(stickerCode, event) {
+    event.preventDefault();
+    if (!ownedStickers.has(stickerCode)) {
+        // Auto-mark as owned first
+        ownedStickers.add(stickerCode);
+    }
+    duplicates[stickerCode] = (duplicates[stickerCode] || 0) + 1;
+
+    refreshStickerEl(stickerCode);
+    const team = TEAMS_DATA.find(t => t.stickers.includes(stickerCode));
+    if (team) updateTeamProgress(team.code);
+    updateStats();
+    saveProgress();
+    showToast(`🔄 Repetida adicionada: ${stickerCode} (${duplicates[stickerCode]}x extra)`);
+    return false;
+}
+
+function refreshStickerEl(s) {
+    const el = document.getElementById(`s-${s}`);
+    if (!el) return;
+    const isOwned = ownedStickers.has(s);
+    const dupeCount = duplicates[s] || 0;
+    const hasDupes = isOwned && dupeCount > 0;
+
+    el.className = 'sticker' + (hasDupes ? ' got has-dupes' : (isOwned ? ' got' : ''));
+
+    // Update badge
+    const existingBadge = el.querySelector('.dupe-badge');
+    if (existingBadge) existingBadge.remove();
+    if (hasDupes) {
+        const badge = document.createElement('span');
+        badge.className = 'dupe-badge';
+        badge.textContent = `+${dupeCount}`;
+        el.insertBefore(badge, el.firstChild);
+    }
 }
 
 function selectAll(teamCode) {
     const team = TEAMS_DATA.find(t => t.code === teamCode);
     team.stickers.forEach(s => {
         ownedStickers.add(s);
-        const el = document.getElementById(`s-${s}`);
-        if (el) el.classList.add('got');
+        refreshStickerEl(s);
     });
     updateTeamProgress(teamCode);
     updateStats();
@@ -916,8 +1322,8 @@ function deselectAll(teamCode) {
     const team = TEAMS_DATA.find(t => t.code === teamCode);
     team.stickers.forEach(s => {
         ownedStickers.delete(s);
-        const el = document.getElementById(`s-${s}`);
-        if (el) el.classList.remove('got');
+        delete duplicates[s];
+        refreshStickerEl(s);
     });
     updateTeamProgress(teamCode);
     updateStats();
@@ -928,15 +1334,18 @@ function deselectAll(teamCode) {
 function updateTeamProgress(teamCode) {
     const team = TEAMS_DATA.find(t => t.code === teamCode);
     const section = document.getElementById(`team-${teamCode}`);
+    if (!section) return;
     const gotCount = team.stickers.filter(s => ownedStickers.has(s)).length;
     const totalCount = team.stickers.length;
     const pct = Math.round((gotCount / totalCount) * 100);
 
     const fill = section.querySelector('.team-progress-fill');
     const text = section.querySelector('.team-progress-text');
-    fill.style.width = `${pct}%`;
-    text.textContent = `${gotCount}/${totalCount}`;
-    text.className = `team-progress-text ${gotCount === totalCount ? 'complete' : ''}`;
+    if (fill) fill.style.width = `${pct}%`;
+    if (text) {
+        text.textContent = `${gotCount}/${totalCount}`;
+        text.className = `team-progress-text ${gotCount === totalCount ? 'complete' : ''}`;
+    }
 }
 
 function updateStats() {
@@ -946,12 +1355,129 @@ function updateStats() {
     const missing = totalStickers - got;
     const pct = totalStickers > 0 ? Math.round((got / totalStickers) * 100) : 0;
 
+    // Count total duplicates
+    const totalDupes = Object.values(duplicates).reduce((a, b) => a + b, 0);
+    const dupeTypes = Object.keys(duplicates).filter(k => (duplicates[k] || 0) > 0).length;
+
     document.getElementById('totalGot').textContent = got;
     document.getElementById('totalAll').textContent = totalStickers;
     document.getElementById('statGot').textContent = got;
     document.getElementById('statMissing').textContent = missing;
     document.getElementById('statPct').textContent = `${pct}%`;
+    document.getElementById('statDupes').textContent = totalDupes;
     document.getElementById('mainProgressBar').style.width = `${pct}%`;
+
+    // Update tab badge
+    const badge = document.getElementById('dupesTabBadge');
+    badge.textContent = dupeTypes;
+    badge.className = `tab-badge ${dupeTypes > 0 ? '' : 'zero'}`;
+}
+
+// ============================================================
+//  RENDER DUPLICATES TAB
+// ============================================================
+function setDupesSort(sort, btn) {
+    dupesSort = sort;
+    document.querySelectorAll('.dupes-sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderDupesTab();
+}
+
+function renderDupesTab() {
+    const container = document.getElementById('dupesContainer');
+    const empty = document.getElementById('dupesEmpty');
+    const banner = document.getElementById('dupesSummaryBanner');
+    const pill = document.getElementById('dupesTotalPill');
+
+    // Get all dupes
+    const allDupes = Object.entries(duplicates).filter(([, qty]) => qty > 0);
+
+    if (allDupes.length === 0) {
+        container.innerHTML = '';
+        empty.style.display = 'block';
+        banner.style.display = 'none';
+        pill.textContent = '0 tipos';
+        return;
+    }
+
+    empty.style.display = 'none';
+    banner.style.display = 'flex';
+
+    const totalDupeQty = allDupes.reduce((a, [, qty]) => a + qty, 0);
+    pill.textContent = `${allDupes.length} tipo${allDupes.length !== 1 ? 's' : ''}`;
+    document.getElementById('dupesBannerTitle').textContent = `${allDupes.length} tipo${allDupes.length !== 1 ? 's' : ''} de repetidas`;
+    document.getElementById('dupesBannerSub').textContent = `Total de ${totalDupeQty} figurinha${totalDupeQty !== 1 ? 's' : ''} repetida${totalDupeQty !== 1 ? 's' : ''} para trocar`;
+
+    // Group by team
+    const byTeam = {};
+    TEAMS_DATA.forEach(t => {
+        const teamDupes = t.stickers
+            .filter(s => (duplicates[s] || 0) > 0)
+            .map(s => ({ code: s, qty: duplicates[s] }));
+        if (teamDupes.length > 0) {
+            byTeam[t.code] = { team: t, dupes: teamDupes };
+        }
+    });
+
+    let groups = Object.values(byTeam);
+
+    if (dupesSort === 'qty') {
+        groups.sort((a, b) => {
+            const qa = a.dupes.reduce((s, d) => s + d.qty, 0);
+            const qb = b.dupes.reduce((s, d) => s + d.qty, 0);
+            return qb - qa;
+        });
+    }
+
+    container.innerHTML = '';
+
+    groups.forEach(({ team, dupes }) => {
+        const totalQty = dupes.reduce((s, d) => s + d.qty, 0);
+
+        const section = document.createElement('div');
+        section.className = 'dupes-team-section';
+
+        const stickersHTML = dupes.map(d => `
+            <div class="dupe-item" id="dupe-item-${d.code}">
+                <span class="dupe-code">${d.code}</span>
+                <div class="dupe-qty-controls">
+                    <button class="qty-btn minus" onclick="changeDupeQty('${d.code}', -1)" title="Remover uma">−</button>
+                    <span class="qty-display" id="dupe-qty-${d.code}">${d.qty}</span>
+                    <button class="qty-btn plus" onclick="changeDupeQty('${d.code}', 1)" title="Adicionar uma">+</button>
+                </div>
+            </div>
+        `).join('');
+
+        section.innerHTML = `
+            <div class="dupes-team-header">
+                <span class="flag">${team.flag}</span>
+                <span class="name">${team.name}</span>
+                <span class="dupe-count">🔄 ${dupes.length} tipo${dupes.length !== 1 ? 's' : ''} · ${totalQty} total</span>
+            </div>
+            <div class="dupes-stickers-list">${stickersHTML}</div>
+        `;
+
+        container.appendChild(section);
+    });
+}
+
+function changeDupeQty(stickerCode, delta) {
+    const current = duplicates[stickerCode] || 0;
+    const newVal = current + delta;
+
+    if (newVal <= 0) {
+        delete duplicates[stickerCode];
+        showToast(`✅ ${stickerCode} removida das repetidas`);
+    } else {
+        duplicates[stickerCode] = newVal;
+    }
+
+    refreshStickerEl(stickerCode);
+    const team = TEAMS_DATA.find(t => t.stickers.includes(stickerCode));
+    if (team) updateTeamProgress(team.code);
+    updateStats();
+    saveProgress();
+    renderDupesTab();
 }
 
 // ============================================================
@@ -979,10 +1505,16 @@ function applyFilters() {
             const el = document.getElementById(`s-${s}`);
             if (!el) return;
             const isOwned = ownedStickers.has(s);
-            const matchesFilter = currentFilter === 'all' || 
-                                   (currentFilter === 'got' && isOwned) ||
-                                   (currentFilter === 'missing' && !isOwned);
-            const matchesSearch = !query || s.toUpperCase().includes(query) || team.code.toUpperCase().includes(query) || team.name.toUpperCase().includes(query);
+            const hasDupes = isOwned && (duplicates[s] || 0) > 0;
+            const matchesFilter =
+                currentFilter === 'all' ||
+                (currentFilter === 'got' && isOwned) ||
+                (currentFilter === 'missing' && !isOwned) ||
+                (currentFilter === 'dupes' && hasDupes);
+            const matchesSearch = !query ||
+                s.toUpperCase().includes(query) ||
+                team.code.toUpperCase().includes(query) ||
+                team.name.toUpperCase().includes(query);
 
             if (matchesFilter && matchesSearch) {
                 el.classList.remove('filtered-out');
@@ -1003,7 +1535,8 @@ function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
     toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
 }
 
 // ============================================================
@@ -1011,9 +1544,13 @@ function showToast(msg) {
 // ============================================================
 checkAutoLogin();
 
-// Enter key on login
 document.getElementById('userCodeInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') doLogin();
+});
+
+// Disable default context menu on sticker grids
+document.addEventListener('contextmenu', (e) => {
+    if (e.target.closest('.sticker')) e.preventDefault();
 });
 </script>
 
